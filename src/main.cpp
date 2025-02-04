@@ -40,15 +40,7 @@ void setup()
     Log.Init(&sClock, "/" + String(GIT_VERSION) + "/log", "txt");
 
     gpsLog.Init(&sClock, "/" + String(GIT_VERSION) + "/gps", "csv");
-    gpsLog.Push("datetime");
-    gpsLog.Push(",");
-    gpsLog.Push("millis");
-    gpsLog.Push(",");
-    gpsLog.Push("latitude");
-    gpsLog.Push(",");
-    gpsLog.Push("longitude");
-    gpsLog.Push(",");
-    gpsLog.PushLine("elevation");
+    gpsLog.PushLine("datetime,millis,latitude,longitude,altitude");
 
     Log.Info("Setup complete. Begin loop...");
 }
@@ -60,16 +52,15 @@ void loop()
     if (gps.HasChanged())
     {
         sClock.Sync(gps);
-        String gpsData = gps.ToString();
 
         gpsLog.Push(ISODateUtcMillis(sClock));
         gpsLog.Push(",");
         gpsLog.Push(String(millis()));
         gpsLog.Push(",");
-        gpsLog.Push(String(gps.Lat()));
+        gpsLog.Push(String(gps.Lat(), 6));
         gpsLog.Push(",");
-        gpsLog.Push(String(gps.Lng()));
+        gpsLog.Push(String(gps.Lng(), 6));
         gpsLog.Push(",");
-        gpsLog.PushLine(String(gps.Ele()));
+        gpsLog.PushLine(String(gps.Ele(), 1));
     }
 }
