@@ -7,8 +7,6 @@
 #include "pins.h"
 #include "utils.h"
 
-#include "git_version.h" // generated via pre platformio script
-
 Clock sClock;
 GPS gps;
 Logger gpsLog;
@@ -27,7 +25,6 @@ void setup()
         delay(100);
     }
 
-    Log.Info(String("Starting kartail... Commit Version: ") + String(GIT_VERSION));
     Log.Info("Waiting for first GPS fix...");
     while (!gps.IsValid())
         gps.Process();
@@ -37,9 +34,9 @@ void setup()
     sClock.Sync(gps);
 
     Log.Info("Initalize logging...");
-    Log.Init(&sClock, "/" + String(GIT_VERSION) + "/log", "txt");
+    Log.Init(&sClock, "/log", "txt");
 
-    gpsLog.Init(&sClock, "/" + String(GIT_VERSION) + "/gps", "csv");
+    gpsLog.Init(&sClock, "/gps", "csv");
     gpsLog.PushLine("datetime,millis,latitude,longitude,altitude");
 
     Log.Info("Setup complete. Begin loop...");
