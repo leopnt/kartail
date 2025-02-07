@@ -37,7 +37,7 @@ void setup()
     Log.Init(&sClock, "/log", "txt");
 
     gpsLog.Init(&sClock, "/gps", "csv");
-    gpsLog.PushLine("datetime,millis,latitude,longitude,altitude");
+    gpsLog.PushLine("datetime,millis,latitude,longitude,altitude,n_satellites,hdop");
 
     Log.Info("Setup complete. Begin loop...");
 }
@@ -58,6 +58,10 @@ void loop()
         gpsLog.Push(",");
         gpsLog.Push(String(gps.Lng(), 6));
         gpsLog.Push(",");
-        gpsLog.PushLine(String(gps.Ele(), 1));
+        gpsLog.Push(String(gps.Ele(), 1));
+        gpsLog.Push(",");
+        gpsLog.Push(String(gps.NumSatellites()));
+        gpsLog.Push(",");
+        gpsLog.PushLine(String(gps.Hdop(), 2));
     }
 }

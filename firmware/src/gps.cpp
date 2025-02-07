@@ -74,6 +74,8 @@ bool GPS::HasChanged()
 
 bool GPS::IsValid()
 {
+    bool satellites = m_nmeaParser.satellites.isValid();
+    bool hdop = m_nmeaParser.hdop.isValid();
     bool date = m_nmeaParser.date.isValid();
     bool time = m_nmeaParser.time.isValid();
     bool location = m_nmeaParser.location.isValid();
@@ -130,6 +132,16 @@ double GPS::Lng()
 double GPS::Ele()
 {
     return m_nmeaParser.altitude.meters();
+}
+
+uint32_t GPS::NumSatellites()
+{
+    return m_nmeaParser.satellites.value();
+}
+
+double GPS::Hdop()
+{
+    return m_nmeaParser.hdop.hdop();
 }
 
 String GPS::ToString()

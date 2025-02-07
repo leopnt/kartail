@@ -36,5 +36,7 @@ public:
     double Lat();
     double Lng();
     double Ele();
+    uint32_t NumSatellites();
+    double Hdop();
     String ToString();
 };
