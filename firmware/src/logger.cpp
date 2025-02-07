@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "global_logger.h"
 
-Logger::Logger()
+Logger::Logger() : m_bufferLineLength(DEFAULT_BUFFER_LINE_LENGTH)
 {
 }
 
@@ -44,8 +44,9 @@ void mkdirp(String dir)
     }
 }
 
-void Logger::Init(Clock *clock, String path, String ext)
+void Logger::Init(Clock *clock, String path, String ext, uint16_t bufferLineLength)
 {
+    m_bufferLineLength = bufferLineLength;
     m_clock = clock;
     m_path = path;
 
@@ -76,7 +77,7 @@ void Logger::PushLine(String message)
     m_logBuffer += message;
     m_logBuffer += "\n";
 
-    if (m_logCount >= BUFFER_LINE_LENGTH)
+    if (m_logCount >= m_bufferLineLength)
     {
         if (m_logFile)
         {
@@ -86,7 +87,7 @@ void Logger::PushLine(String message)
             m_logBuffer.clear();
             m_logCount = 0;
 
-            Log.Info(String("Wrote ") + BUFFER_LINE_LENGTH + String(" lines to file: ") + m_path + +"/" + m_logFile.name());
+            Log.Info(String("Wrote ") + m_bufferLineLength + String(" lines to file: ") + m_path + +"/" + m_logFile.name());
         }
         else
         {

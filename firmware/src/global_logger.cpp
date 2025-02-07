@@ -3,7 +3,7 @@
 
 GlobalLogger Log;
 
-GlobalLogger::GlobalLogger(/* args */)
+GlobalLogger::GlobalLogger() : Logger()
 {
 }
 
