@@ -62,6 +62,6 @@ void loop()
         gpsLog.Push(",");
         gpsLog.Push(String(gps.NumSatellites()));
         gpsLog.Push(",");
-        gpsLog.PushLine(String(gps.Hdop(), 2));
+        gpsLog.PushLine(String(gps.Hdop(), 1));
     }
 }
