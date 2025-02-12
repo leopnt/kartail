@@ -8,6 +8,7 @@
 #include "pins.h"
 #include "utils.h"
 #include "esp_timer.h"
+#include "can_transceiver.h"
 #include <esp_system.h>
 
 Clock sClock;
@@ -15,6 +16,8 @@ GPS gps;
 Logger gpsLog;
 IMU imu;
 Logger imuLog;
+CANTransceiver canTRx;
+Logger canTRxLog;
 
 void setup()
 {
@@ -39,6 +42,12 @@ void setup()
     }
     Log.Info(imu.info());
 
+    Log.Info("Initialize CAN Transceiver...");
+    if (!canTRx.Begin())
+    {
+        Raise("Failed to start CAN transceiver serial communication!");
+    }
+
     Log.Info("Waiting for first GPS fix...");
     while (!gps.IsValid())
         gps.Process();
@@ -56,6 +65,9 @@ void setup()
     u_int16_t saveEveryNSeconds = 5;
     imuLog.Init(&sClock, "/imu", "csv", IMU_SAMPLE_RATE * saveEveryNSeconds);
     imuLog.PushLine("datetime,millis,ax,ay,az,mx,my,mz,gx,gy,gz");
+
+    canTRxLog.Init(&sClock, "/can", "csv", 100);
+    canTRxLog.PushLine("datetime,millis,id,is_extended,is_rtr,data");
 
     Log.Info("Setup complete. Begin loop...");
 }
@@ -108,5 +120,22 @@ void loop()
         imuLog.Push(String(imu.GY()));
         imuLog.Push(",");
         imuLog.PushLine(String(imu.GZ()));
+    }
+
+    canTRx.Process();
+
+    if (canTRx.HasChanged())
+    {
+        canTRxLog.Push(ISODateUtcMillis(sClock));
+        canTRxLog.Push(",");
+        canTRxLog.Push(String(millis()));
+        canTRxLog.Push(",");
+        canTRxLog.Push(String(canTRx.ID()));
+        canTRxLog.Push(",");
+        canTRxLog.Push(String((int)canTRx.IsExtended()));
+        canTRxLog.Push(",");
+        canTRxLog.Push(String((int)canTRx.IsRtr()));
+        canTRxLog.Push(",");
+        canTRxLog.PushLine(canTRx.Data());
     }
 }
