@@ -1,17 +1,5 @@
 #include "utils.h"
 
-String ISODateUtc(const Clock &clock)
-{
-    return ISODateUtc(
-        clock.Year(), clock.Month(), clock.Day(), clock.Hour(), clock.Minute(), clock.Second());
-}
-
-String ISODateUtcMillis(const Clock &clock)
-{
-    return ISODateUtcMillis(
-        clock.Year(), clock.Month(), clock.Day(), clock.Hour(), clock.Minute(), clock.Second(), clock.Millis());
-}
-
 String ISODateUtc(uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second)
 {
     String out = String("");

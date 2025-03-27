@@ -10,7 +10,6 @@ Logger::Logger() : m_bufferLineLength(DEFAULT_BUFFER_LINE_LENGTH)
 
 Logger::~Logger()
 {
-    m_clock = NULL;
     SD.end();
 }
 
@@ -44,10 +43,9 @@ void mkdirp(String dir)
     }
 }
 
-void Logger::Init(Clock *clock, String path, String ext, uint16_t bufferLineLength)
+void Logger::Init(Session const &session, String path, String ext, uint16_t bufferLineLength)
 {
     m_bufferLineLength = bufferLineLength;
-    m_clock = clock;
     m_path = path;
 
     if (!SD.begin(SD_SC))
@@ -55,12 +53,12 @@ void Logger::Init(Clock *clock, String path, String ext, uint16_t bufferLineLeng
 
     mkdirp(path);
 
-    String now = ISODateUtc(*m_clock);
-    now.replace(String(':'), "");
-
-    String filename = m_path + "/" + now + "." + ext;
+    String filename = m_path + "/" + session.GetID() + "." + ext;
 
     Log.Info("Opening file: " + filename);
+
+    if (SD.exists(filename))
+        Raise("Overwriting existing files is forbidden");
 
     m_logFile = SD.open(filename, FILE_WRITE);
     if (!m_logFile)

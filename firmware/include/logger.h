@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <SD.h>
 #include "gps.h"
-#include "clock.h"
+#include "session.h"
 
 #define DEFAULT_BUFFER_LINE_LENGTH 10
 
@@ -16,12 +16,10 @@ protected:
     String m_path;
     uint16_t m_bufferLineLength;
 
-    Clock *m_clock;
-
 public:
     Logger(/* args */);
     ~Logger();
-    void Init(Clock *clock, String path, String ext, uint16_t bufferLineLength = DEFAULT_BUFFER_LINE_LENGTH);
+    void Init(Session const &session, String path, String ext, uint16_t bufferLineLength = DEFAULT_BUFFER_LINE_LENGTH);
 
     void Push(String message);
     void PushLine(String message);
