@@ -3,7 +3,7 @@
 
 void Raise(String message, uint8_t ledPin)
 {
-    Log.Error(message);
+    Serial.println("FATAL: " + message);
     while (true)
     {
         digitalWrite(ledPin, LOW);

@@ -25,7 +25,9 @@ void GlobalLogger::LogWithTag(String message, String tag)
     out += String("[") + tag + String("]: ") + message;
 
     Serial.println(out);
-    PushLine(out);
+
+    if (m_logFile) // prevent infinite loops in case PushLine() is called within PushLine()
+        PushLine(out);
 }
 
 void GlobalLogger::Info(String message)
