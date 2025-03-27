@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
-#include <TinyGps++.h>
+#include <TinyGPSPlus.h>
 
 class GPS
 {
