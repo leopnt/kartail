@@ -28,8 +28,8 @@ def log_gps_location(df: pl.DataFrame):
         ],
         columns=rr.GeoPoints.columns(
             positions=df.select("latitude", "longitude").to_numpy(),
-            radii=[rr.Radius.ui_points(6.0) for _ in range(len(df_upsampled))],
-            colors=[[255, 0, 0] for _ in range(len(df_upsampled))],
+            radii=[rr.Radius.ui_points(6.0) for _ in range(len(df))],
+            colors=[[255, 0, 0] for _ in range(len(df))],
         ),
     )
 
