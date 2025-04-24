@@ -22,7 +22,7 @@ void GlobalLogger::LogWithTag(String message, String tag)
 
     Serial.println(out);
 
-    if (m_logFile) // prevent infinite loops in case PushLine() is called within PushLine()
+    if (m_logFile)
         PushLine(out);
 }
 
