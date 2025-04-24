@@ -7,7 +7,7 @@
 #include "pins.h"
 #include "utils.h"
 #include "esp_timer.h"
-#include "can_transceiver.h"
+#include "obd_transceiver.h"
 #include <esp_system.h>
 #include "session.h"
 
@@ -15,8 +15,8 @@ GPS gps;
 Logger gpsLog;
 IMU imu;
 Logger imuLog;
-CANTransceiver canTRx;
-Logger canTRxLog;
+OBDTransceiver obdTRx;
+Logger obdTRxLog;
 
 Session session;
 
@@ -45,10 +45,10 @@ void setup()
     }
     Log.Info(imu.info());
 
-    Log.Info("Initialize CAN Transceiver...");
-    if (!canTRx.Begin())
+    Log.Info("Initialize OBD Transceiver...");
+    if (!obdTRx.Begin())
     {
-        Raise("Failed to start CAN transceiver serial communication!");
+        Raise("Failed to start OBD communication!");
     }
 
     Log.Init(session, "/log", "txt");
@@ -60,8 +60,8 @@ void setup()
     imuLog.Init(session, "/imu", "csv", IMU_SAMPLE_RATE * saveEveryNSeconds);
     imuLog.PushLine("session,millis,ax,ay,az,mx,my,mz,gx,gy,gz");
 
-    canTRxLog.Init(session, "/can", "csv", 100);
-    canTRxLog.PushLine("session,millis,id,is_extended,is_rtr,data");
+    obdTRxLog.Init(session, "/obd", "csv", 100);
+    obdTRxLog.PushLine("session,millis,pid,data");
 
     Log.Info("Setup complete. Begin loop...");
 }
@@ -70,7 +70,7 @@ void loop()
 {
     gps.Process();
     imu.Process();
-    canTRx.Process();
+    obdTRx.Process();
 
     if (gps.HasChanged())
     {
@@ -116,18 +116,14 @@ void loop()
         imuLog.PushLine(String(imu.GZ()));
     }
 
-    if (canTRx.HasChanged())
+    if (obdTRx.HasChanged())
     {
-        canTRxLog.Push(String(session.GetID()));
-        canTRxLog.Push(",");
-        canTRxLog.Push(String(millis()));
-        canTRxLog.Push(",");
-        canTRxLog.Push(String(canTRx.ID()));
-        canTRxLog.Push(",");
-        canTRxLog.Push(String((int)canTRx.IsExtended()));
-        canTRxLog.Push(",");
-        canTRxLog.Push(String((int)canTRx.IsRtr()));
-        canTRxLog.Push(",");
-        canTRxLog.PushLine(canTRx.Data());
+        obdTRxLog.Push(String(session.GetID()));
+        obdTRxLog.Push(",");
+        obdTRxLog.Push(String(millis()));
+        obdTRxLog.Push(",");
+        obdTRxLog.Push(String(obdTRx.ID()));
+        obdTRxLog.Push(",");
+        obdTRxLog.PushLine(String(obdTRx.Data(), 16));
     }
 }

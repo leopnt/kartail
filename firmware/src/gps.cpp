@@ -6,7 +6,7 @@
 
 GPS::GPS()
 {
-    m_gpsSerial = &Serial1;
+    m_gpsSerial = &GPS_SERIAL;
     m_gpsSerial->begin(9600, SERIAL_8N1, GPS_RX, GPS_TX);
 
     m_nmeaParser = TinyGPSPlus();
