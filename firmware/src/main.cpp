@@ -51,12 +51,6 @@ void setup()
         Raise("Failed to start CAN transceiver serial communication!");
     }
 
-    Log.Info("Waiting for first GPS fix...");
-    while (!gps.IsValid())
-        gps.Process();
-
-    Log.Info("GPS fix acquired!");
-
     Log.Init(session, "/log", "txt");
 
     gpsLog.Init(session, "/gps", "csv");
