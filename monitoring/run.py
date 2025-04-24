@@ -3,6 +3,7 @@ import polars as pl
 import rerun as rr
 import rerun.blueprint as rrb
 from datetime import timedelta
+from glob import glob
 
 
 def log_gps_trace(df: pl.DataFrame):
@@ -52,9 +53,23 @@ def log_gps_altitude(df: pl.DataFrame):
 if __name__ == "__main__":
     rr.init("Kartail monitoring", spawn=True)
 
-    df = pl.read_csv(
-        "/Users/leopnt/Downloads/0bbce73/gps/2025-02-05T074234Z.csv",
-        try_parse_dates=True,
+    files = sorted(glob("/Volumes/KARTAIL/gps/*.csv"))
+    dfs = []
+    for file in files:
+        try:
+            dfs.append(pl.read_csv(file))
+        except pl.exceptions.NoDataError:
+            print(f"Skipped empty dataframe: {file}")
+
+    df: pl.DataFrame = pl.concat(dfs)
+
+    df = df.with_columns(pl.col("datetime").str.to_datetime(strict=False))
+    df = df.sort(by="datetime")
+    df.drop_nulls(subset=["datetime"])
+
+    df = df.filter(
+        (pl.col("session") == pl.max("session"))
+        | (pl.col("session") == pl.max("session") - 1)
     )
 
     fps_target = 10
