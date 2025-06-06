@@ -45,11 +45,11 @@ void setup()
     Log.Init(session, "/log", "txt");
 
     gpsLog.Init(session, "/gps", "csv");
-    gpsLog.PushLine("session,millis,datetime,latitude,longitude,altitude,n_satellites,hdop");
+    gpsLog.PushLine("millis,datetime,latitude,longitude,altitude,n_satellites,hdop");
 
     u_int16_t saveEveryNSeconds = 5;
     imuLog.Init(session, "/imu", "csv", IMU_SAMPLE_RATE * saveEveryNSeconds);
-    imuLog.PushLine("session,millis,ax,ay,az,mx,my,mz,gx,gy,gz");
+    imuLog.PushLine("millis,ax,ay,az,mx,my,mz,gx,gy,gz");
 
     Log.Info("Setup complete. Begin loop...");
 }
@@ -61,8 +61,6 @@ void loop()
 
     if (gps.HasChanged())
     {
-        gpsLog.Push(String(session.GetID()));
-        gpsLog.Push(",");
         gpsLog.Push(String(millis()));
         gpsLog.Push(",");
         gpsLog.Push(ISODateUtc(gps.Year(), gps.Month(), gps.Day(), gps.Hour(), gps.Minute(), gps.Second()));
@@ -80,8 +78,6 @@ void loop()
 
     if (imu.HasChanged())
     {
-        imuLog.Push(String(session.GetID()));
-        imuLog.Push(",");
         imuLog.Push(String(millis()));
         imuLog.Push(",");
         imuLog.Push(String(imu.AX()));
